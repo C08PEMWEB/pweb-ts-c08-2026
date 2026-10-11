@@ -1,0 +1,22 @@
+{
+  "name": "pweb-ts-c08-2026",
+  "version": "1.0.0",
+  "description": "Aplikasi Antrian Rumah Sakit Native TypeScript",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "watch": "tsc --watch"
+  },
+  "keywords": [
+    "typescript",
+    "native",
+    "antrian-rumah-sakit"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,785 @@
+/* ==========================================================================
+   CSS Native Design System - GitHub Dark Primer Theme
+   100% Native CSS (GitHub Dark Mode Aesthetic & Component Standards)
+   ========================================================================== */
+
+:root {
+  /* GitHub Dark Canvas & Backgrounds */
+  --gh-canvas-default: #0d1117;
+  --gh-canvas-subtle: #161b22;
+  --gh-canvas-inset: #010409;
+  --gh-canvas-overlay: #161b22;
+  
+  /* GitHub Dark Text Colors */
+  --gh-fg-default: #e6edf3;
+  --gh-fg-muted: #7d8590;
+  --gh-fg-subtle: #6e7681;
+  --gh-fg-on-emphasis: #ffffff;
+  
+  /* GitHub Dark Borders */
+  --gh-border-default: #30363d;
+  --gh-border-muted: #21262d;
+  --gh-border-subtle: #1b1f24;
+  
+  /* GitHub Dark Brand & Accent (Blue) */
+  --gh-accent-fg: #2f81f7;
+  --gh-accent-emphasis: #1f6feb;
+  --gh-accent-muted: rgba(56, 139, 253, 0.15);
+  --gh-accent-subtle: rgba(56, 139, 253, 0.1);
+  
+  /* GitHub Dark Green (Success / Primary Button) */
+  --gh-success-fg: #3fb950;
+  --gh-success-emphasis: #238636;
+  --gh-success-hover: #2ea043;
+  --gh-success-muted: rgba(46, 160, 67, 0.15);
+  
+  /* GitHub Dark Attention / Warning (Amber/Yellow) */
+  --gh-attention-fg: #d29922;
+  --gh-attention-emphasis: #bb8009;
+  --gh-attention-muted: rgba(187, 128, 9, 0.15);
+  
+  /* GitHub Dark Danger (Red) */
+  --gh-danger-fg: #f85149;
+  --gh-danger-emphasis: #da3633;
+  --gh-danger-hover: #b62324;
+  --gh-danger-muted: rgba(248, 81, 73, 0.15);
+  
+  /* GitHub Dark Labels (Priority Pills) */
+  --gh-label-vip-bg: rgba(163, 113, 247, 0.15);
+  --gh-label-vip-fg: #d2a8ff;
+  --gh-label-vip-border: #a371f7;
+  
+  --gh-label-disabilitas-bg: rgba(56, 139, 253, 0.15);
+  --gh-label-disabilitas-fg: #79c0ff;
+  --gh-label-disabilitas-border: #388bfd;
+  
+  --gh-label-lansia-bg: rgba(187, 128, 9, 0.15);
+  --gh-label-lansia-fg: #e3b341;
+  --gh-label-lansia-border: #bb8009;
+  
+  --gh-label-normal-bg: rgba(110, 118, 129, 0.15);
+  --gh-label-normal-fg: #8b949e;
+  --gh-label-normal-border: #484f58;
+
+  /* Typography */
+  --font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  
+  /* Radii & Shadows */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-pill: 2em;
+  
+  --shadow-box: 0 1px 3px rgba(1, 4, 9, 0.85);
+  --shadow-dropdown: 0 8px 24px rgba(1, 4, 9, 0.85);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family-sans);
+  background-color: var(--gh-canvas-default);
+  color: var(--gh-fg-default);
+  line-height: 1.5;
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+/* ==========================================================================
+   GitHub Dark Top Header & Navigation
+   ========================================================================== */
+
+.gh-header {
+  background-color: var(--gh-canvas-inset);
+  color: var(--gh-fg-default);
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--gh-border-default);
+}
+
+.gh-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.gh-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gh-header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--gh-fg-default);
+}
+
+.gh-repo-breadcrumb {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--gh-fg-muted);
+}
+
+.gh-repo-breadcrumb a {
+  color: var(--gh-accent-fg);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.gh-repo-breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.gh-public-badge {
+  font-size: 11px;
+  border: 1px solid var(--gh-border-default);
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  color: var(--gh-fg-muted);
+  font-weight: 500;
+  background-color: var(--gh-canvas-subtle);
+}
+
+/* ==========================================================================
+   Profile Avatar Dropdown Component
+   ========================================================================== */
+
+.gh-dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.gh-profile-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: var(--gh-canvas-subtle);
+  border: 1px solid var(--gh-border-default);
+  padding: 4px 8px;
+  border-radius: var(--radius-md);
+  color: var(--gh-fg-default);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.gh-profile-btn:hover {
+  background-color: #21262d;
+  border-color: #8b949e;
+}
+
+.gh-avatar-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1f6feb, #238636);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.gh-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  left: auto;
+  background-color: var(--gh-canvas-overlay);
+  border: 1px solid var(--gh-border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-dropdown);
+  min-width: 230px;
+  z-index: 1000;
+  padding: 6px 0;
+  animation: fadeIn 0.12s ease-out;
+}
+
+.gh-dropdown-menu.show {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.gh-dropdown-header {
+  padding: 8px 16px 10px 16px;
+  font-size: 12px;
+  color: var(--gh-fg-muted);
+}
+
+.gh-dropdown-user {
+  font-weight: 600;
+  color: var(--gh-fg-default);
+  font-size: 13px;
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.gh-dropdown-divider {
+  height: 1px;
+  background-color: var(--gh-border-muted);
+  margin: 6px 0;
+}
+
+.gh-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 16px;
+  font-size: 13px;
+  color: var(--gh-fg-default);
+  text-decoration: none;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.12s ease;
+}
+
+.gh-dropdown-item:hover {
+  background-color: var(--gh-accent-emphasis);
+  color: #ffffff;
+}
+
+.gh-dropdown-item-danger {
+  color: var(--gh-danger-fg);
+}
+
+.gh-dropdown-item-danger:hover {
+  background-color: var(--gh-danger-emphasis);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   GitHub Dark Subnav Tabs
+   ========================================================================== */
+
+.gh-subnav {
+  background-color: var(--gh-canvas-default);
+  border-bottom: 1px solid var(--gh-border-default);
+  padding: 0 24px;
+  display: flex;
+  gap: 6px;
+}
+
+.gh-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--gh-fg-default);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  font-weight: 500;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.gh-tab:hover {
+  color: #ffffff;
+  border-bottom-color: var(--gh-border-default);
+}
+
+.gh-tab.active {
+  font-weight: 600;
+  color: #ffffff;
+  border-bottom-color: #f78166; /* GitHub active orange indicator */
+}
+
+.gh-counter {
+  background-color: #30363d;
+  color: var(--gh-fg-default);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 0 6px;
+  border-radius: var(--radius-pill);
+}
+
+/* ==========================================================================
+   Container & Layout Grid
+   ========================================================================== */
+
+.container {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.grid-admin {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 960px) {
+  .grid-admin {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   GitHub Dark Box / Card
+   ========================================================================== */
+
+.card,
+.gh-box {
+  background-color: var(--gh-canvas-subtle);
+  border: 1px solid var(--gh-border-default);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-box);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.card-header,
+.gh-box-header {
+  background-color: var(--gh-canvas-subtle);
+  border-bottom: 1px solid var(--gh-border-default);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title,
+.gh-box-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gh-fg-default);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-body,
+.gh-box-body {
+  padding: 16px;
+}
+
+/* ==========================================================================
+   GitHub Dark Buttons
+   ========================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--gh-border-default);
+  background-color: #21262d;
+  color: var(--gh-fg-default);
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  user-select: none;
+  white-space: nowrap;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.btn:hover:not(:disabled) {
+  background-color: #30363d;
+  border-color: #8b949e;
+  color: #ffffff;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* GitHub Green Primary Button */
+.btn-primary,
+.btn-dark {
+  background-color: var(--gh-success-emphasis);
+  border-color: rgba(240, 246, 252, 0.1);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-dark:hover:not(:disabled) {
+  background-color: var(--gh-success-hover);
+  border-color: rgba(240, 246, 252, 0.1);
+  color: #ffffff;
+}
+
+.btn-sm {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.btn-danger-outline {
+  height: 28px;
+  padding: 0 10px;
+  font-size: 12px;
+  background-color: #21262d;
+  border: 1px solid #30363d;
+  color: var(--gh-danger-fg);
+  border-radius: var(--radius-md);
+}
+
+.btn-danger-outline:hover:not(:disabled) {
+  background-color: var(--gh-danger-muted);
+  border-color: var(--gh-danger-fg);
+  color: var(--gh-danger-fg);
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--gh-accent-fg);
+  padding: 0;
+  cursor: pointer;
+}
+
+.btn-link:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   GitHub Dark Form Controls
+   ========================================================================== */
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: var(--gh-fg-default);
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  height: 32px;
+  padding: 0 10px;
+  font-size: 13px;
+  line-height: 30px;
+  border: 1px solid var(--gh-border-default);
+  border-radius: var(--radius-md);
+  background-color: var(--gh-canvas-default);
+  color: var(--gh-fg-default);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #1f6feb;
+  box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.4);
+}
+
+.form-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+/* ==========================================================================
+   Badges (GitHub Dark Labels)
+   ========================================================================== */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 20px;
+  padding: 0 8px;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 18px;
+  border-radius: var(--radius-pill);
+  border: 1px solid transparent;
+  white-space: nowrap;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.badge-primary {
+  background-color: var(--gh-accent-muted);
+  color: var(--gh-accent-fg);
+  border-color: #388bfd;
+}
+
+.badge-secondary {
+  background-color: #21262d;
+  color: var(--gh-fg-muted);
+  border-color: var(--gh-border-default);
+}
+
+.badge-success {
+  background-color: var(--gh-success-muted);
+  color: var(--gh-success-fg);
+  border-color: var(--gh-success-emphasis);
+}
+
+.badge-warning {
+  background-color: var(--gh-attention-muted);
+  color: var(--gh-attention-fg);
+  border-color: var(--gh-attention-emphasis);
+}
+
+.badge-danger {
+  background-color: var(--gh-danger-muted);
+  color: var(--gh-danger-fg);
+  border-color: var(--gh-danger-emphasis);
+}
+
+/* Priority Pills */
+.badge-vip {
+  background-color: var(--gh-label-vip-bg);
+  color: var(--gh-label-vip-fg);
+  border-color: var(--gh-label-vip-border);
+}
+
+.badge-disabilitas {
+  background-color: var(--gh-label-disabilitas-bg);
+  color: var(--gh-label-disabilitas-fg);
+  border-color: var(--gh-label-disabilitas-border);
+}
+
+.badge-lansia {
+  background-color: var(--gh-label-lansia-bg);
+  color: var(--gh-label-lansia-fg);
+  border-color: var(--gh-label-lansia-border);
+}
+
+.badge-normal {
+  background-color: var(--gh-label-normal-bg);
+  color: var(--gh-label-normal-fg);
+  border-color: var(--gh-label-normal-border);
+}
+
+/* Service Code Monospace Badge */
+.service-code-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  font-family: var(--font-family-mono);
+  font-size: 11px;
+  font-weight: 700;
+  background-color: #21262d;
+  border: 1px solid #30363d;
+  color: #58a6ff;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   List Rows: Service Item & Ticket Item (Dark Mode)
+   ========================================================================== */
+
+.service-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  min-height: 52px;
+  border-bottom: 1px solid var(--gh-border-muted);
+  transition: background-color 0.12s ease;
+}
+
+.service-item:last-child {
+  border-bottom: none;
+}
+
+.service-item:hover {
+  background-color: #1c2128;
+}
+
+.service-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.service-item-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.service-item-title {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--gh-fg-default);
+}
+
+.service-item-subtitle {
+  font-size: 11px;
+  color: var(--gh-fg-muted);
+  padding-left: 30px;
+}
+
+.service-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.service-inactive {
+  opacity: 0.5;
+}
+
+/* Queue Groups in Dark Mode */
+.queue-group {
+  margin-bottom: 12px;
+  border: 1px solid var(--gh-border-default);
+  border-radius: var(--radius-md);
+  background: var(--gh-canvas-subtle);
+  overflow: hidden;
+}
+
+.queue-group-title {
+  background-color: #161b22;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gh-fg-muted);
+  border-bottom: 1px solid var(--gh-border-default);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.queue-empty-state {
+  padding: 8px 14px;
+  font-size: 12px;
+  color: var(--gh-fg-subtle);
+  font-style: normal;
+}
+
+/* Ticket Row */
+.ticket-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 14px;
+  min-height: 44px;
+  border-bottom: 1px solid var(--gh-border-muted);
+  background-color: var(--gh-canvas-subtle);
+  transition: background-color 0.12s ease;
+}
+
+.ticket-item:last-child {
+  border-bottom: none;
+}
+
+.ticket-item:hover {
+  background-color: #1c2128;
+}
+
+.ticket-item.status-dipanggil {
+  background-color: rgba(46, 160, 67, 0.12);
+  border-left: 3px solid var(--gh-success-fg);
+}
+
+.ticket-item-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ticket-num {
+  font-family: var(--font-family-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: #58a6ff;
+  line-height: 1;
+}
+
+.ticket-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+
+
+/* ==========================================================================
+   Alerts (Dark Mode)
+   ========================================================================== */
+
+.alert {
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid transparent;
+}
+
+.alert-danger {
+  background-color: rgba(248, 81, 73, 0.15);
+  color: var(--gh-danger-fg);
+  border-color: var(--gh-danger-emphasis);
+}
+
+.alert-success {
+  background-color: rgba(46, 160, 67, 0.15);
+  color: var(--gh-success-fg);
+  border-color: var(--gh-success-emphasis);
+}
+
+.alert-warning {
+  background-color: rgba(187, 128, 9, 0.15);
+  color: var(--gh-attention-fg);
+  border-color: var(--gh-attention-emphasis);
+}
+
+/* ==========================================================================
+   Typography Helpers
+   ========================================================================== */
+
+.text-sm { font-size: 12px; }
+.text-xs { font-size: 11px; }
+.text-muted { color: var(--gh-fg-muted); }
+.text-center { text-align: center; }
+.font-bold { font-weight: 700; }
+.font-semibold { font-weight: 600; }

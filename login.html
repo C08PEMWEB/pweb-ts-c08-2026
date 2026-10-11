@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Sistem Antrian Rumah Sakit</title>
+  <script type="module" src="dist/login.js" defer></script>
+</head>
+<body>
+  <h2>Login Petugas</h2>
+  <p>Silakan masuk menggunakan akun DummyJSON.</p>
+
+  <div id="login-alert"></div>
+
+  <form id="form-login">
+    <div>
+      <label for="input-username">Username:</label><br>
+      <input type="text" id="input-username" placeholder="misal: emilys" required>
+    </div>
+    <br>
+    <div>
+      <label for="input-password">Password:</label><br>
+      <input type="password" id="input-password" placeholder="password" required>
+    </div>
+    <br>
+    <button type="submit" id="btn-submit-login">Masuk</button>
+  </form>
+
+  <br>
+  <div style="font-size: 13px; color: #555;">
+    <strong>Catatan Uji Coba:</strong><br>
+    Admin/Moderator: <code>emilys</code> / <code>emilyspass</code><br>
+    User biasa: <code>kminchelle</code> / <code>0lelplR</code>
+  </div>
+
+  <hr>
+  <p>
+    <a href="ambil-antrian.html">Kiosk Ambil Tiket</a> | 
+    <a href="layar.html">Layar Monitor</a>
+  </p>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kiosk Ambil Antrian</title>
+  <script type="module" src="dist/ambil-antrian.js" defer></script>
+</head>
+<body>
+  <h2>Kiosk Mandiri - Ambil Nomor Antrian</h2>
+  <p>Pilih layanan dan prioritas antrian Anda:</p>
+
+  <form id="form-kiosk">
+    <div>
+      <label for="select-service">Pilih Layanan:</label><br>
+      <select id="select-service" required>
+        <option value="" disabled selected>-- Pilih Layanan --</option>
+      </select>
+    </div>
+    <br>
+    <div>
+      <label for="select-priority">Pilih Prioritas:</label><br>
+      <select id="select-priority">
+        <option value="Normal">Normal</option>
+        <option value="Lansia">Lansia</option>
+        <option value="Disabilitas">Disabilitas</option>
+        <option value="VIP">VIP</option>
+      </select>
+    </div>
+    <br>
+    <button type="submit" id="btn-submit-kiosk">Ambil Nomor Antrian</button>
+  </form>
+
+  <br>
+  <div id="kiosk-result" style="border: 1px dashed #333; padding: 10px; display: none; width: fit-content;">
+    <h3>Tiket Antrian Anda</h3>
+    <p>Layanan: <span id="result-service">-</span></p>
+    <p style="font-size: 24px; font-weight: bold;">Nomor: <span id="result-number">-</span></p>
+    <p>Prioritas: <span id="result-priority">-</span></p>
+  </div>
+
+  <hr>
+  <p>
+    <a href="layar.html">Layar Antrian</a> | 
+    <a href="login.html">Login Petugas</a>
+  </p>
+</body>
+</html>
