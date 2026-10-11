@@ -221,7 +221,7 @@ if (serviceListContainer) {
         }
         else if (action === "delete") {
             const name = btn.dataset["name"] ?? "layanan ini";
-            if (confirm(`Apakah Anda yakin ingin menghapus layanan "${name}"? Seluruh antrian terkait akan tetap dipertahankan.`)) {
+            if (confirm(`Apakah Anda yakin ingin menghapus layanan "${name}" beserta seluruh antriannya?`)) {
                 deleteService(id);
                 showAlert(`Layanan "${name}" berhasil dihapus.`, "success");
                 renderServices();

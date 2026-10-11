@@ -170,10 +170,16 @@ export function toggleServiceStatus(id: string): boolean {
  */
 export function deleteService(id: string): boolean {
   const services = getServices();
-  const filtered = services.filter((s) => s.id !== id);
-  if (filtered.length === services.length) return false;
+  const target = services.find((s) => s.id === id);
+  if (!target) return false;
 
+  const filtered = services.filter((s) => s.id !== id);
   saveServices(filtered);
+
+  // Bersihkan juga tiket terkait layanan ini agar tidak terjadi orphan data
+  const tickets = getTickets().filter((t) => t.serviceCode !== target.code);
+  saveTickets(tickets);
+
   return true;
 }
 
