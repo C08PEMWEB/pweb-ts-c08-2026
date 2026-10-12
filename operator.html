@@ -4,23 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Panel Operator</title>
-  <script type="module" src="dist/operator.js" defer></script>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/operator.css">
+  <script type="module" src="dist/operator.js"></script>
 </head>
 <body>
-  <h2>Panel Operator Layanan</h2>
-  <p>
-    Petugas: <span id="navbar-user-name">-</span> 
-    (<span id="navbar-user-role">-</span>) | 
-    <button id="btn-logout">Logout</button>
-  </p>
-  <hr>
+  <header class="gh-header">
+    <div class="gh-header-left">
+      <strong>Panel Operator</strong>
+    </div>
+    <div class="gh-header-right">
+      <span class="text-sm text-muted">Petugas:</span>
+      <span id="navbar-user-name">-</span>
+      <span id="navbar-user-role" class="badge badge-primary">-</span>
+      <button id="btn-logout" class="btn btn-sm">Logout</button>
+    </div>
+  </header>
 
-  <div id="operator-container">
-    <!-- Diisi oleh operator.ts -->
-  </div>
+  <main class="container">
+    <h1 class="operator-page-title">Panel Operator Layanan</h1>
+    <p class="operator-page-subtitle text-sm">Panggil, selesaikan, atau lewati tiket untuk tiap layanan.</p>
 
-  <hr>
-  <p><a href="layar.html">Buka Layar Monitor</a></p>
+    <div id="operator-container" class="operator-grid">
+      <!-- Diisi oleh operator.ts -->
+    </div>
+
+    <footer class="operator-footer text-sm">
+      <a href="layar.html">Buka Layar Monitor</a>
+    </footer>
+  </main>
 </body>
 </html>
