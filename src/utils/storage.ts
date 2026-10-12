@@ -1,262 +1,135 @@
-import type { AuthSession, QueueService, Ticket, PriorityLevel, TicketStatus } from "../types/index.js";
+import type { AuthSession, QueueService, Ticket, PriorityLevel } from "../types/index.js";
 
-export const STORAGE_KEYS = {
-  SESSION: "rs_auth_session",
+const KEYS = {
+  SESSION: "rs_queue_session",
   SERVICES: "rs_queue_services",
   TICKETS: "rs_queue_tickets",
 } as const;
 
-// Seed data awal jika localStorage masih kosong
-const DEFAULT_SERVICES: QueueService[] = [
-  { id: "srv-a", code: "A", name: "Umum-1", isActive: true, createdAt: "2026-10-11T08:00:00.000Z" },
-  { id: "srv-b", code: "B", name: "Umum-2", isActive: true, createdAt: "2026-10-11T08:00:00.000Z" },
-  { id: "srv-c", code: "C", name: "Umum-3", isActive: true, createdAt: "2026-10-11T08:00:00.000Z" },
-  { id: "srv-g", code: "G", name: "Gigi", isActive: true, createdAt: "2026-10-11T08:00:00.000Z" },
-  { id: "srv-f", code: "F", name: "Farmasi", isActive: true, createdAt: "2026-10-11T08:00:00.000Z" },
-  { id: "srv-p", code: "P", name: "Psikolog", isActive: true, createdAt: "2026-10-11T08:00:00.000Z" },
-];
-
-/**
- * Validasi runtime aman untuk objek AuthSession dari localStorage (unknown -> AuthSession | null)
- */
+// --- Session Management ---
 export function getSession(): AuthSession | null {
+  const data = localStorage.getItem(KEYS.SESSION);
+  if (!data) return null;
   try {
-    const raw: unknown = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) ?? "null");
-    if (
-      typeof raw === "object" &&
-      raw !== null &&
-      "token" in raw &&
-      "role" in raw &&
-      "firstName" in raw &&
-      "username" in raw &&
-      typeof (raw as { token: unknown }).token === "string" &&
-      typeof (raw as { role: unknown }).role === "string" &&
-      typeof (raw as { firstName: unknown }).firstName === "string" &&
-      typeof (raw as { username: unknown }).username === "string"
-    ) {
-      const roleStr = (raw as { role: string }).role.toLowerCase();
-      const role = (roleStr === "admin" || roleStr === "moderator" ? roleStr : "user") as AuthSession["role"];
-      return {
-        token: (raw as { token: string }).token,
-        role,
-        firstName: (raw as { firstName: string }).firstName,
-        username: (raw as { username: string }).username,
-      };
-    }
+    return JSON.parse(data) as AuthSession;
   } catch {
-    // Abaikan parse error, kembalikan null
+    return null;
   }
-  return null;
 }
 
 export function saveSession(session: AuthSession): void {
-  localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(session));
+  localStorage.setItem(KEYS.SESSION, JSON.stringify(session));
 }
 
 export function clearSession(): void {
-  localStorage.removeItem(STORAGE_KEYS.SESSION);
+  localStorage.removeItem(KEYS.SESSION);
 }
 
-/**
- * Validasi runtime aman untuk daftar master jenis antrian
- */
+// --- Master Service Management ---
 export function getServices(): QueueService[] {
-  try {
-    const raw: unknown = JSON.parse(localStorage.getItem(STORAGE_KEYS.SERVICES) ?? "null");
-    if (Array.isArray(raw)) {
-      const validated: QueueService[] = [];
-      for (const item of raw) {
-        if (
-          typeof item === "object" &&
-          item !== null &&
-          "id" in item &&
-          "code" in item &&
-          "name" in item &&
-          "isActive" in item &&
-          "createdAt" in item &&
-          typeof (item as { id: unknown }).id === "string" &&
-          typeof (item as { code: unknown }).code === "string" &&
-          typeof (item as { name: unknown }).name === "string" &&
-          typeof (item as { isActive: unknown }).isActive === "boolean" &&
-          typeof (item as { createdAt: unknown }).createdAt === "string"
-        ) {
-          validated.push({
-            id: (item as { id: string }).id,
-            code: (item as { code: string }).code.toUpperCase(),
-            name: (item as { name: string }).name,
-            isActive: (item as { isActive: boolean }).isActive,
-            createdAt: (item as { createdAt: string }).createdAt,
-          });
-        }
-      }
-      if (validated.length > 0) return validated;
-    }
-  } catch {
-    // Abaikan jika rusak, fallback ke default
+  const data = localStorage.getItem(KEYS.SERVICES);
+  if (!data) {
+    const defaultServices: QueueService[] = [
+      { id: "1", code: "A", name: "UMUM-1", isActive: true, createdAt: new Date().toISOString() },
+      { id: "2", code: "B", name: "UMUM-2", isActive: true, createdAt: new Date().toISOString() },
+    ];
+    saveServices(defaultServices);
+    return defaultServices;
   }
-
-  // Jika belum ada di localStorage, simpan default services
-  saveServices(DEFAULT_SERVICES);
-  return DEFAULT_SERVICES;
+  try {
+    return JSON.parse(data) as QueueService[];
+  } catch {
+    return [];
+  }
 }
 
 export function saveServices(services: QueueService[]): void {
-  localStorage.setItem(STORAGE_KEYS.SERVICES, JSON.stringify(services));
+  localStorage.setItem(KEYS.SERVICES, JSON.stringify(services));
   window.dispatchEvent(new Event("storage_services_updated"));
 }
 
-/**
- * Menambah Jenis Antrian baru dengan validasi 1 huruf kapital & nama unik (case-insensitive)
- */
-export function addService(code: string, name: string): { success: boolean; message?: string; service?: QueueService } {
+export function addService(code: string, name: string): { success: boolean; message?: string } {
+  const services = getServices();
   const cleanCode = code.trim().toUpperCase();
   const cleanName = name.trim();
 
-  // Validasi format kode: tepat 1 huruf alfabet kapital
-  if (!/^[A-Z]$/.test(cleanCode)) {
-    return { success: false, message: "Kode harus berupa 1 huruf kapital alfabet (A-Z)!" };
+  if (services.some((s) => s.code.toUpperCase() === cleanCode)) {
+    return { success: false, message: "Kode layanan sudah digunakan!" };
   }
-
-  if (cleanName.length < 2) {
-    return { success: false, message: "Nama layanan minimal 2 karakter!" };
-  }
-
-  const currentServices = getServices();
-
-  // Cek duplikasi kode (case-insensitive)
-  const isCodeDuplicate = currentServices.some(
-    (s) => s.code.toUpperCase() === cleanCode
-  );
-  if (isCodeDuplicate) {
-    return { success: false, message: `Kode '${cleanCode}' sudah digunakan! Gunakan huruf lain.` };
-  }
-
-  // Cek duplikasi nama (case-insensitive)
-  const isNameDuplicate = currentServices.some(
-    (s) => s.name.trim().toLowerCase() === cleanName.toLowerCase()
-  );
-  if (isNameDuplicate) {
-    return { success: false, message: `Nama layanan '${cleanName}' sudah ada!` };
+  if (services.some((s) => s.name.toLowerCase() === cleanName.toLowerCase())) {
+    return { success: false, message: "Nama layanan sudah digunakan!" };
   }
 
   const newService: QueueService = {
-    id: `srv-${Date.now()}-${cleanCode.toLowerCase()}`,
+    id: Date.now().toString(),
     code: cleanCode,
     name: cleanName,
     isActive: true,
     createdAt: new Date().toISOString(),
   };
 
-  currentServices.push(newService);
-  saveServices(currentServices);
-  return { success: true, service: newService };
-}
-
-/**
- * Mengubah status aktif / nonaktif suatu jenis antrian
- */
-export function toggleServiceStatus(id: string): boolean {
-  const services = getServices();
-  const target = services.find((s) => s.id === id);
-  if (!target) return false;
-
-  target.isActive = !target.isActive;
+  services.push(newService);
   saveServices(services);
-  return true;
+  return { success: true };
 }
 
-/**
- * Menghapus suatu jenis antrian
- */
-export function deleteService(id: string): boolean {
+export function toggleServiceStatus(id: string): void {
   const services = getServices();
-  const target = services.find((s) => s.id === id);
-  if (!target) return false;
-
-  const filtered = services.filter((s) => s.id !== id);
-  saveServices(filtered);
-
-  // Bersihkan juga tiket terkait layanan ini agar tidak terjadi orphan data
-  const tickets = getTickets().filter((t) => t.serviceCode !== target.code);
-  saveTickets(tickets);
-
-  return true;
+  const index = services.findIndex((s) => s.id === id);
+  if (index !== -1 && services[index]) {
+    services[index].isActive = !services[index].isActive;
+    saveServices(services);
+  }
 }
 
-/**
- * Validasi runtime aman untuk tiket antrian
- */
+export function deleteService(id: string): void {
+  const services = getServices().filter((s) => s.id !== id);
+  saveServices(services);
+}
+
+// --- Ticket Management ---
 export function getTickets(): Ticket[] {
+  const data = localStorage.getItem(KEYS.TICKETS);
+  if (!data) return [];
   try {
-    const raw: unknown = JSON.parse(localStorage.getItem(STORAGE_KEYS.TICKETS) ?? "null");
-    if (Array.isArray(raw)) {
-      const validated: Ticket[] = [];
-      for (const item of raw) {
-        if (
-          typeof item === "object" &&
-          item !== null &&
-          "id" in item &&
-          "ticketNumber" in item &&
-          "serviceCode" in item &&
-          "priority" in item &&
-          "status" in item &&
-          typeof (item as { id: unknown }).id === "string" &&
-          typeof (item as { ticketNumber: unknown }).ticketNumber === "string" &&
-          typeof (item as { serviceCode: unknown }).serviceCode === "string"
-        ) {
-          validated.push(item as Ticket);
-        }
-      }
-      return validated;
-    }
+    return JSON.parse(data) as Ticket[];
   } catch {
-    // Abaikan
+    return [];
   }
-  return [];
 }
 
 export function saveTickets(tickets: Ticket[]): void {
-  localStorage.setItem(STORAGE_KEYS.TICKETS, JSON.stringify(tickets));
+  localStorage.setItem(KEYS.TICKETS, JSON.stringify(tickets));
   window.dispatchEvent(new Event("storage_tickets_updated"));
 }
 
-/**
- * Membuat nomor tiket baru format Kode-Nomor 3 Digit (contoh: A-001, B-012)
- */
-export function createTicket(serviceCode: string, priority: PriorityLevel): Ticket | null {
+export function createTicket(serviceCode: string, priority: PriorityLevel = "Normal"): Ticket | null {
   const services = getServices();
-  const service = services.find((s) => s.code.toUpperCase() === serviceCode.toUpperCase() && s.isActive);
-  if (!service) {
-    return null;
-  }
+  const service = services.find((s) => s.code === serviceCode && s.isActive);
+  if (!service) return null;
 
-  const allTickets = getTickets();
-  // Hitung jumlah tiket untuk layanan ini untuk menentukan sequenceNumber
-  const ticketsForService = allTickets.filter((t) => t.serviceCode === service.code);
-  const nextSeq = ticketsForService.length + 1;
-  const seqStr = String(nextSeq).padStart(3, "0");
-  const ticketNumber = `${service.code}-${seqStr}`;
+  const tickets = getTickets();
+  const serviceTickets = tickets.filter((t) => t.serviceCode === serviceCode);
+  const nextNum = serviceTickets.length + 1;
+  const formattedNum = String(nextNum).padStart(3, "0");
 
   const newTicket: Ticket = {
-    id: `tkt-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
-    ticketNumber,
-    sequenceNumber: nextSeq,
+    id: Date.now().toString(),
+    sequenceNumber: nextNum,
     serviceCode: service.code,
     serviceName: service.name,
+    ticketNumber: `${service.code}-${formattedNum}`,
     priority,
     status: "menunggu",
     createdAt: new Date().toISOString(),
   };
 
-  allTickets.push(newTicket);
-  saveTickets(allTickets);
+  tickets.push(newTicket);
+  saveTickets(tickets);
   return newTicket;
 }
 
-/**
- * Reset Antrian: Mengosongkan seluruh antrian aktif dan mengembalikan urutan tiket ke awal
- */
 export function resetAllTickets(): void {
-  saveTickets([]);
+  localStorage.removeItem(KEYS.TICKETS);
+  window.dispatchEvent(new Event("storage_tickets_updated"));
 }
-

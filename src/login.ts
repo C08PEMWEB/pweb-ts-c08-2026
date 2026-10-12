@@ -2,10 +2,9 @@ import type { AuthSession, DummyJsonLoginResponse } from "./types/index.js";
 import { saveSession } from "./utils/storage.js";
 import { redirectIfLoggedIn } from "./utils/guard.js";
 
-// Pengalihan jika sudah login
+// Pengalihan otomatis jika pengguna sudah login
 redirectIfLoggedIn();
 
-// Form elements dasar sebagai jembatan sistem
 const formLogin = document.getElementById("form-login") as HTMLFormElement | null;
 const inputUsername = document.getElementById("input-username") as HTMLInputElement | null;
 const inputPassword = document.getElementById("input-password") as HTMLInputElement | null;
@@ -19,8 +18,17 @@ if (formLogin) {
     const username = inputUsername.value.trim();
     const password = inputPassword.value;
 
+    if (!username || !password) {
+      if (alertBox) {
+        alertBox.textContent = "Username dan password wajib diisi!";
+        alertBox.style.color = "red";
+      }
+      return;
+    }
+
+    if (alertBox) alertBox.textContent = "";
+
     try {
-      // Panggilan API POST dummyjson
       const response = await fetch("https://dummyjson.com/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -36,7 +44,6 @@ if (formLogin) {
       const loginData = data as DummyJsonLoginResponse;
       const token = loginData.accessToken ?? loginData.token ?? "token-dummy";
 
-      // Role check (admin/moderator -> index.html, user -> operator.html)
       let role: AuthSession["role"] = "user";
       if (loginData.role === "admin" || loginData.role === "moderator") {
         role = loginData.role;
@@ -53,7 +60,6 @@ if (formLogin) {
 
       saveSession(session);
 
-      // Redirect otomatis sesuai peran
       if (session.role === "admin" || session.role === "moderator") {
         window.location.href = "index.html";
       } else {
