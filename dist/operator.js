@@ -8,6 +8,14 @@ const operatorContainer = document.getElementById("operator-container");
 /**
  * Render dasar antrian operator (starter skeleton)
  */
+function escapeHtml(text) {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
 function renderOperator() {
     if (!operatorContainer)
         return;
@@ -17,15 +25,36 @@ function renderOperator() {
     for (const s of services) {
         const called = getCurrentlyCalledTicket(s.code, tickets);
         const next = getNextTicket(s.code, tickets);
+        const code = escapeHtml(s.code);
         html += `
-      <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
-    <h3>${escapeHtml(s.name)} (${escapeHtml(s.code)})</h3>
-    <p>Sedang Dipanggil: <strong>${called ? escapeHtml(called.ticketNumber) : "-"}</strong></p>
-    <p>Berikutnya (Prioritas): <strong>${next ? escapeHtml(next.ticketNumber + " (" + next.priority + ")") : "-"}</strong></p>
-    <p>Jumlah Menunggu: <strong>${getWaitingCount(s.code, tickets)}</strong></p>
-    <button data-action="call" data-code="${escapeHtml(s.code)}">Panggil Berikutnya</button>
-    <button data-action="finish" data-code="${escapeHtml(s.code)}">Selesai</button>
-    <button data-action="skip" data-code="${escapeHtml(s.code)}">Lewati</button>
+      <div class="card operator-card">
+        <div class="card-header">
+          <span class="card-title">
+            <span class="service-code-badge">${code}</span>
+            ${escapeHtml(s.name)}
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="operator-now ${called ? "is-active" : ""}">
+            <span class="operator-label">Sedang Dipanggil</span>
+            <span class="operator-ticket">${called ? escapeHtml(called.ticketNumber) : "-"}</span>
+          </div>
+          <div class="operator-next">
+            <span class="operator-label">Berikutnya</span>
+            ${next
+            ? `<strong class="ticket-num">${escapeHtml(next.ticketNumber)}</strong>
+                   <span class="badge badge-${next.priority.toLowerCase()}">${escapeHtml(next.priority)}</span>`
+            : `<span class="text-muted">-</span>`}
+          </div>
+          <div class="operator-stats">
+            <span>Menunggu: <strong>${getWaitingCount(s.code, tickets)}</strong></span>
+          </div>
+          <div class="operator-actions">
+            <button class="btn btn-primary" data-action="call" data-code="${code}">Panggil Berikutnya</button>
+            <button class="btn" data-action="finish" data-code="${code}">Selesai</button>
+            <button class="btn btn-danger-outline" data-action="skip" data-code="${code}">Lewati</button>
+          </div>
+        </div>
       </div>
     `;
     }
@@ -60,13 +89,5 @@ window.addEventListener("storage", (event) => {
         renderOperator();
     }
 });
-function escapeHtml(text) {
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-}
 // Inisialisasi awal
 renderOperator();

@@ -1,0 +1,140 @@
+
+.operator-page-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.operator-page-subtitle {
+  color: var(--gh-fg-muted);
+  margin-bottom: 20px;
+}
+
+
+.operator-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.operator-card {
+  margin-bottom: 0; 
+}
+
+/* Blok "Sedang Dipanggil" */
+.operator-now {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px;
+  margin-bottom: 12px;
+  border: 1px solid var(--gh-border-default);
+  border-radius: var(--radius-md);
+  background-color: var(--gh-canvas-default);
+}
+
+.operator-now.is-active {
+  background-color: var(--gh-success-muted);
+  border-color: var(--gh-success-emphasis);
+}
+
+.operator-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gh-fg-muted);
+}
+
+.operator-ticket {
+  font-family: var(--font-family-mono);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--gh-fg-default);
+}
+
+.operator-now.is-active .operator-ticket {
+  color: var(--gh-success-fg);
+}
+
+/* Baris "Berikutnya" */
+.operator-next {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  min-height: 24px;
+  margin-bottom: 14px;
+}
+
+/* Ringkasan angka kecil di bawah */
+.operator-stats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: var(--gh-fg-muted);
+}
+
+.operator-stats strong {
+  color: var(--gh-fg-default);
+}
+
+/* Tombol aksi */
+.operator-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.operator-actions .btn-primary {
+  flex: 1 1 100%; /* "Panggil Berikutnya" selalu satu baris penuh */
+}
+
+.operator-actions .btn:not(.btn-primary) {
+  flex: 1 1 0;
+}
+
+/* Tombol danger-outline dari style.css lebih pendek (28px); samakan tinggi */
+.operator-actions .btn-danger-outline {
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.operator-empty {
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--gh-fg-muted);
+  border: 1px dashed var(--gh-border-default);
+  border-radius: var(--radius-md);
+}
+
+/* Footer halaman */
+.operator-footer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--gh-border-muted);
+}
+
+.operator-footer a {
+  color: var(--gh-accent-fg);
+  text-decoration: none;
+}
+
+.operator-footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .operator-grid {
+    grid-template-columns: 1fr;
+  }
+}
