@@ -1,7 +1,14 @@
 import type { AuthSession } from "./types/index.js";
-import { getServices, getTickets, saveTickets } from "./utils/storage.js";
+import { getServices, getTickets, saveTickets, STORAGE_KEYS } from "./utils/storage.js";
 import { requireAuth, setupNavbar } from "./utils/guard.js";
-import { getCurrentlyCalledTicket, getNextTicket } from "./utils/queue.js";
+import {
+  callNext,
+  finishCurrent,
+  getCurrentlyCalledTicket,
+  getNextTicket,
+  getWaitingCount,
+  skipCurrent,
+} from "./utils/queue.js";
 
 // Auth Guard: operator hanya boleh dibuka oleh yang sudah login
 const session: AuthSession = requireAuth(["admin", "moderator", "user"]);
@@ -25,10 +32,13 @@ function renderOperator(): void {
 
     html += `
       <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
-        <h3>${s.name} (${s.code})</h3>
-        <p>Sedang Dipanggil: <strong>${called ? called.ticketNumber : "-"}</strong></p>
-        <p>Berikutnya (Prioritas): <strong>${next ? next.ticketNumber + " (" + next.priority + ")" : "-"}</strong></p>
-        <button data-action="call" data-code="${s.code}">Panggil Berikutnya</button>
+    <h3>${escapeHtml(s.name)} (${escapeHtml(s.code)})</h3>
+    <p>Sedang Dipanggil: <strong>${called ? escapeHtml(called.ticketNumber) : "-"}</strong></p>
+    <p>Berikutnya (Prioritas): <strong>${next ? escapeHtml(next.ticketNumber + " (" + next.priority + ")") : "-"}</strong></p>
+    <p>Jumlah Menunggu: <strong>${getWaitingCount(s.code, tickets)}</strong></p>
+    <button data-action="call" data-code="${escapeHtml(s.code)}">Panggil Berikutnya</button>
+    <button data-action="finish" data-code="${escapeHtml(s.code)}">Selesai</button>
+    <button data-action="skip" data-code="${escapeHtml(s.code)}">Lewati</button>
       </div>
     `;
   }
@@ -38,28 +48,41 @@ function renderOperator(): void {
 
 if (operatorContainer) {
   operatorContainer.addEventListener("click", (e) => {
-    const target = e.target as HTMLElement;
-    if (target.tagName !== "BUTTON") return;
+    if (!(e.target instanceof HTMLButtonElement)) return;
+    const target = e.target;
 
     const action = target.dataset["action"];
     const serviceCode = target.dataset["code"];
-    if (action !== "call" || !serviceCode) return;
+    if (!serviceCode) return;
 
     const tickets = getTickets();
-    const called = getCurrentlyCalledTicket(serviceCode, tickets);
-    if (called) {
-      called.status = "selesai";
-    }
+    const now = new Date().toISOString();
+    let updatedTickets = tickets;
 
-    const next = getNextTicket(serviceCode, tickets);
-    if (next) {
-      next.status = "dipanggil";
-      next.calledAt = new Date().toISOString();
-      saveTickets(tickets);
-    }
+    if (action === "call") updatedTickets = callNext(serviceCode, tickets, now);
+    else if (action === "finish") updatedTickets = finishCurrent(serviceCode, tickets, now);
+    else if (action === "skip") updatedTickets = skipCurrent(serviceCode, tickets, now);
+    else return;
+
+    saveTickets(updatedTickets);
 
     renderOperator();
   });
+}
+
+window.addEventListener("storage", (event) => {
+  if (event.key === STORAGE_KEYS.TICKETS || event.key === STORAGE_KEYS.SERVICES) {
+    renderOperator();
+  }
+});
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 // Inisialisasi awal

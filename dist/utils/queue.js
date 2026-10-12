@@ -41,3 +41,37 @@ export function getNextTicket(serviceCode, tickets) {
 export function getWaitingCount(serviceCode, tickets) {
     return tickets.filter((t) => t.serviceCode === serviceCode && t.status === "menunggu").length;
 }
+/** Menyelesaikan tiket yang sedang dipanggil, lalu memanggil tiket berikutnya. */
+export function callNext(serviceCode, tickets, now) {
+    const currentTicket = getCurrentlyCalledTicket(serviceCode, tickets);
+    const nextTicket = getNextTicket(serviceCode, tickets);
+    if (!currentTicket && !nextTicket)
+        return tickets;
+    return tickets.map((ticket) => {
+        if (currentTicket && ticket.id === currentTicket.id) {
+            return { ...ticket, status: "selesai", completedAt: now };
+        }
+        if (nextTicket && ticket.id === nextTicket.id) {
+            return { ...ticket, status: "dipanggil", calledAt: now };
+        }
+        return ticket;
+    });
+}
+/** Menyelesaikan tiket yang sedang dipanggil tanpa memanggil tiket lain. */
+export function finishCurrent(serviceCode, tickets, now) {
+    const currentTicket = getCurrentlyCalledTicket(serviceCode, tickets);
+    if (!currentTicket)
+        return tickets;
+    return tickets.map((ticket) => ticket.id === currentTicket.id
+        ? { ...ticket, status: "selesai", completedAt: now }
+        : ticket);
+}
+/** Menandai tiket yang sedang dipanggil sebagai dilewati. */
+export function skipCurrent(serviceCode, tickets, now) {
+    const currentTicket = getCurrentlyCalledTicket(serviceCode, tickets);
+    if (!currentTicket)
+        return tickets;
+    return tickets.map((ticket) => ticket.id === currentTicket.id
+        ? { ...ticket, status: "dilewati" }
+        : ticket);
+}
