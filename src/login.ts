@@ -8,6 +8,7 @@ redirectIfLoggedIn();
 const formLogin = document.getElementById("form-login") as HTMLFormElement | null;
 const inputUsername = document.getElementById("input-username") as HTMLInputElement | null;
 const inputPassword = document.getElementById("input-password") as HTMLInputElement | null;
+const btnSubmitLogin = document.getElementById("btn-submit-login") as HTMLButtonElement | null;
 const alertBox = document.getElementById("login-alert");
 
 if (formLogin) {
@@ -21,12 +22,16 @@ if (formLogin) {
     if (!username || !password) {
       if (alertBox) {
         alertBox.textContent = "Username dan password wajib diisi!";
-        alertBox.style.color = "red";
+        alertBox.style.color = "#f85149";
       }
       return;
     }
 
     if (alertBox) alertBox.textContent = "";
+    if (btnSubmitLogin) {
+      btnSubmitLogin.disabled = true;
+      btnSubmitLogin.textContent = "Memproses...";
+    }
 
     try {
       const response = await fetch("https://dummyjson.com/auth/login", {
@@ -37,7 +42,7 @@ if (formLogin) {
 
       const data: unknown = await response.json();
 
-      if (!response.ok) {
+      if (!response.ok || typeof data !== "object" || data === null) {
         throw new Error("Login gagal: Username atau password tidak sesuai.");
       }
 
@@ -47,6 +52,31 @@ if (formLogin) {
       let role: AuthSession["role"] = "user";
       if (loginData.role === "admin" || loginData.role === "moderator") {
         role = loginData.role;
+      } else if (typeof loginData.id === "number") {
+        // Ambil role asli pengguna dari endpoint /users/{id} DummyJSON
+        try {
+          const userRes = await fetch(
+            `https://dummyjson.com/users/${loginData.id}?select=role`
+          );
+          if (userRes.ok) {
+            const userData: unknown = await userRes.json();
+            if (
+              typeof userData === "object" &&
+              userData !== null &&
+              "role" in userData
+            ) {
+              const fetchedRole = (userData as { role: unknown }).role;
+              if (fetchedRole === "admin" || fetchedRole === "moderator") {
+                role = fetchedRole;
+              }
+            }
+          }
+        } catch {
+          // Fallback jika gagal fetch detail role
+          if (username === "emilys" || username === "michaelw") {
+            role = "admin";
+          }
+        }
       } else if (username === "emilys" || username === "michaelw") {
         role = "admin";
       }
@@ -67,8 +97,14 @@ if (formLogin) {
       }
     } catch (err) {
       if (alertBox) {
-        alertBox.textContent = err instanceof Error ? err.message : "Terjadi kesalahan jaringan.";
-        alertBox.style.color = "red";
+        alertBox.textContent =
+          err instanceof Error ? err.message : "Terjadi kesalahan jaringan.";
+        alertBox.style.color = "#f85149";
+      }
+    } finally {
+      if (btnSubmitLogin) {
+        btnSubmitLogin.disabled = false;
+        btnSubmitLogin.textContent = "Masuk";
       }
     }
   });

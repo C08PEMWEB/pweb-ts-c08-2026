@@ -13,8 +13,8 @@ Gunakan akun resmi dari [dummyjson.com/users](https://dummyjson.com/users) untuk
 | Role di Sistem | Username | Password | Halaman Tujuan (*Auto-Redirect*) | Hak Akses & Izin |
 | :--- | :--- | :--- | :--- | :--- |
 | **Admin** | `emilys` | `emilyspass` | `index.html` (Dashboard Admin) | Akses penuh dashboard, CRUD jenis antrian, reset nomor tiket, penerbitan tiket manual, dan pemanggilan antrian. |
-| **Moderator** | `michaelw` | `michaelwpass` | `index.html` (Dashboard Admin) | **Setara Admin** (sesuai ketentuan soal: role moderator disamakan hak aksesnya dengan admin). |
-| **User (Operator)** | `kminchelle` | `0lelplR` | `operator.html` (Panel Operator) | Akses panel pemanggilan antrian operator untuk melayani pasien sesuai prioritas. |
+| **Moderator** | `oliviaw` | `oliviawpass` | `index.html` (Dashboard Admin) | **Setara Admin** (sesuai ketentuan soal: role moderator disamakan hak aksesnya dengan admin). |
+| **User (Operator)** | `averyp` | `averyppass` | `operator.html` (Panel Operator) | Akses panel pemanggilan antrian operator untuk melayani pasien sesuai prioritas. |
 
 > **Catatan Akses Publik**: Halaman `ambil-antrian.html` (Kiosk Mandiri) dan `layar.html` (Layar Monitor Antrian) bersifat **publik** dan dapat dibuka langsung tanpa login.
 
@@ -27,7 +27,7 @@ Untuk mendemokan seluruh fitur aplikasi secara runtut saat sesi demo praktikum d
 ### 1️⃣ Halaman Masuk — `login.html`
 * **Demo Auth & Validasi Role**:
   1. Masukkan akun Admin (`emilys` / `emilyspass`), klik **Masuk** $\rightarrow$ verifikasi otomatis diarahkan ke `index.html`.
-  2. Coba logout, lalu login sebagai Operator (`kminchelle` / `0lelplR`) $\rightarrow$ verifikasi diarahkan ke `operator.html`.
+  2. Coba logout, lalu login sebagai Operator (`averyp` / `averyppass`) $\rightarrow$ verifikasi diarahkan ke `operator.html`.
   3. Uji coba masukkan password yang salah $\rightarrow$ verifikasi muncul pesan kesalahan visual.
   4. Uji coba proteksi (*Auth Guard*): Buka langsung `index.html` tanpa login $\rightarrow$ verifikasi sistem menolak dan mengalihkan paksa kembali ke `login.html`.
 
