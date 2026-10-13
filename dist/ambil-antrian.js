@@ -1,5 +1,4 @@
 import { getServices, createTicket } from "./utils/storage.js";
-// DOM Elements dasar
 const selectService = document.getElementById("select-service");
 const selectPriority = document.getElementById("select-priority");
 const formKiosk = document.getElementById("form-kiosk");
@@ -7,18 +6,19 @@ const kioskResult = document.getElementById("kiosk-result");
 const resultService = document.getElementById("result-service");
 const resultNumber = document.getElementById("result-number");
 const resultPriority = document.getElementById("result-priority");
-/**
- * Muat daftar layanan aktif ke dropdown
- */
 function loadServiceOptions() {
     if (!selectService)
         return;
+    const currentSelected = selectService.value;
     const services = getServices().filter((s) => s.isActive);
     let optionsHtml = '<option value="" disabled selected>-- Pilih Layanan --</option>';
     for (const s of services) {
         optionsHtml += `<option value="${s.code}">${s.name} (${s.code})</option>`;
     }
     selectService.innerHTML = optionsHtml;
+    if (currentSelected && services.some((s) => s.code === currentSelected)) {
+        selectService.value = currentSelected;
+    }
 }
 if (formKiosk) {
     formKiosk.addEventListener("submit", (e) => {
@@ -37,8 +37,16 @@ if (formKiosk) {
             resultNumber.textContent = ticket.ticketNumber;
             resultPriority.textContent = ticket.priority;
             kioskResult.style.display = "block";
+            selectService.value = "";
         }
     });
 }
-// Inisialisasi awal
+window.addEventListener("storage", (e) => {
+    if (e.key === "rs_queue_services") {
+        loadServiceOptions();
+    }
+});
+window.addEventListener("storage_services_updated", () => {
+    loadServiceOptions();
+});
 loadServiceOptions();
