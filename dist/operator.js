@@ -8,6 +8,21 @@ const SERVICES_KEY = "rs_queue_services";
 const session = requireAuth(["admin", "moderator", "user"]);
 setupNavbar(session);
 const operatorContainer = document.getElementById("operator-container");
+const btnProfileToggle = document.getElementById("btn-profile-toggle");
+const profileDropdownMenu = document.getElementById("profile-dropdown-menu");
+if (btnProfileToggle && profileDropdownMenu) {
+    btnProfileToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        profileDropdownMenu.classList.toggle("show");
+    });
+    // Tutup dropdown saat klik di luar area
+    document.addEventListener("click", (e) => {
+        const target = e.target;
+        if (!profileDropdownMenu.contains(target) && !btnProfileToggle.contains(target)) {
+            profileDropdownMenu.classList.remove("show");
+        }
+    });
+}
 /**
  * Render dasar antrian operator (starter skeleton)
  */
