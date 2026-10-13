@@ -55,7 +55,7 @@ export function getNextTicket(serviceCode: string, tickets: Ticket[]): Ticket | 
  */
 export function getWaitingCount(serviceCode: string, tickets: Ticket[]): number {
   return tickets.filter(
-    (t) => t.serviceCode === serviceCode && t.status === "menunggu"
+    (t) => t.serviceCode === serviceCode && (t.status === "menunggu" || t.status === "dilewati")
   ).length;
 }
 
