@@ -14,9 +14,9 @@ Gunakan akun resmi dari [dummyjson.com/users](https://dummyjson.com/users) untuk
 | :--- | :--- | :--- | :--- | :--- |
 | **Admin** | `emilys` | `emilyspass` | `index.html` (Dashboard Admin) | Akses penuh dashboard, CRUD jenis antrian, reset nomor tiket, penerbitan tiket manual, dan pemanggilan antrian. |
 | **Moderator** | `oliviaw` | `oliviawpass` | `index.html` (Dashboard Admin) | **Setara Admin** (sesuai ketentuan soal: role moderator disamakan hak aksesnya dengan admin). |
-| **User (Operator)** | `averyp` | `averyppass` | `operator.html` (Panel Operator) | Akses panel pemanggilan antrian operator untuk melayani pasien sesuai prioritas. |
+| **User (Pengunjung / Operator)** | `averyp` | `averyppass` | `ambil-antrian.html` (Kiosk Mandiri) | Akses mengambil nomor tiket di kiosk mandiri dan akses panel operator. |
 
-> **Catatan Akses Publik**: Halaman `ambil-antrian.html` (Kiosk Mandiri) dan `layar.html` (Layar Monitor Antrian) bersifat **publik** dan dapat dibuka langsung tanpa login.
+> **⚠️ Catatan Revisi Modul 3**: Seluruh pengguna **wajib login** untuk dapat mengambil nomor antrian di `ambil-antrian.html`. Jika belum login, sistem akan langsung mengarahkan ke `login.html`. Satu-satunya halaman yang dapat diakses secara publik tanpa login adalah `layar.html` (Layar Monitor Antrian).
 
 ---
 
@@ -27,9 +27,9 @@ Untuk mendemokan seluruh fitur aplikasi secara runtut saat sesi demo praktikum d
 ### 1️⃣ Halaman Masuk — `login.html`
 * **Demo Auth & Validasi Role**:
   1. Masukkan akun Admin (`emilys` / `emilyspass`), klik **Masuk** $\rightarrow$ verifikasi otomatis diarahkan ke `index.html`.
-  2. Coba logout, lalu login sebagai Operator (`averyp` / `averyppass`) $\rightarrow$ verifikasi diarahkan ke `operator.html`.
+  2. Coba logout, lalu login sebagai Pengguna biasa (`averyp` / `averyppass`) $\rightarrow$ verifikasi otomatis diarahkan ke `ambil-antrian.html`.
   3. Uji coba masukkan password yang salah $\rightarrow$ verifikasi muncul pesan kesalahan visual.
-  4. Uji coba proteksi (*Auth Guard*): Buka langsung `index.html` tanpa login $\rightarrow$ verifikasi sistem menolak dan mengalihkan paksa kembali ke `login.html`.
+  4. Uji coba proteksi (*Auth Guard*): Buka langsung `index.html` atau `ambil-antrian.html` tanpa login $\rightarrow$ verifikasi sistem menolak dan mengalihkan paksa kembali ke `login.html`.
 
 ### 2️⃣ Dashboard Admin — `index.html` (Tanggung Jawab: Orang 2)
 * **Demo Pengelolaan Master Data & Tiket**:
@@ -39,11 +39,12 @@ Untuk mendemokan seluruh fitur aplikasi secara runtut saat sesi demo praktikum d
   4. **Reset Antrian**: Klik tombol **Reset Antrian** untuk mengosongkan seluruh antrian aktif dan mengembalikan urutan nomor tiket ke `001`.
 
 ### 3️⃣ Kiosk Pengunjung — `ambil-antrian.html` (Tanggung Jawab: Orang 1)
-* **Demo Kiosk Mandiri Publik**:
-  1. Buka `ambil-antrian.html` (bisa dibuka di tab/jendela terpisah).
-  2. Perhatikan jenis layanan yang aktif muncul secara otomatis.
-  3. Pengunjung memilih jenis layanan dan tingkat prioritas (**Normal, Lansia, Disabilitas, VIP**).
-  4. Ambil tiket $\rightarrow$ nomor tiket tercetak dengan format `[Kode]-[3 Digit]` (misal: `A-001`, `B-002`).
+* **Demo Kiosk Ambil Tiket (Wajib Login - Revisi)**:
+  1. Uji coba proteksi (*Auth Guard*): Buka `ambil-antrian.html` saat belum login $\rightarrow$ verifikasi otomatis dialihkan ke `login.html`.
+  2. Login dengan akun (`averyp` / `averyppass`), perhatikan nama pengguna dan role tampil di header kartu kiosk.
+  3. Perhatikan jenis layanan yang aktif muncul secara otomatis.
+  4. Pengunjung memilih jenis layanan dan tingkat prioritas (**Normal, Lansia, Disabilitas, VIP**).
+  5. Klik **Ambil Nomor Antrian** $\rightarrow$ nomor tiket tercetak dengan format `[Kode]-[3 Digit]` (misal: `A-001`, `B-002`).
 
 ### 4️⃣ Panel Operator — `operator.html` (Tanggung Jawab: Orang 3)
 * **Demo Pemanggilan Berbasis Antrian Prioritas**:

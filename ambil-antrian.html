@@ -9,6 +9,17 @@
 </head>
 <body style="display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #0d1117;">
   <div style="width: 100%; max-width: 480px; padding: 24px; background-color: #161b22; border: 1px solid #30363d; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+    
+    <!-- Header Informasi Sesi Pengguna (Wajib Login) -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #30363d;">
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 13px; color: #8b949e;">Login:</span>
+        <strong id="kiosk-user-name" style="font-size: 13px; color: #58a6ff;">-</strong>
+        <span id="kiosk-user-role" class="badge badge-secondary">-</span>
+      </div>
+      <button id="btn-logout" type="button" class="btn btn-sm" style="font-size: 12px; padding: 2px 8px; height: auto;">Keluar</button>
+    </div>
+
     <h2 style="margin-top: 0; margin-bottom: 8px; font-size: 20px; color: #f0f6fc;">Kiosk Mandiri - Ambil Nomor Antrian</h2>
     <p style="margin-top: 0; margin-bottom: 20px; font-size: 13px; color: #8b949e;">Pilih layanan dan prioritas antrian Anda:</p>
 
@@ -43,7 +54,7 @@
     <div style="margin-top: 24px; padding-top: 12px; border-top: 1px solid #30363d; text-align: center; font-size: 13px;">
       <a href="layar.html" style="color: #58a6ff; text-decoration: none;">Layar Antrian</a>
       <span style="color: #484f58; margin: 0 8px;">|</span>
-      <a href="login.html" style="color: #58a6ff; text-decoration: none;">Login Petugas</a>
+      <a id="nav-dashboard-link" href="operator.html" style="color: #58a6ff; text-decoration: none;">Panel Operator</a>
     </div>
   </div>
 </body>

@@ -76,11 +76,16 @@ if (formLogin) {
                 username: loginData.username,
             };
             saveSession(session);
-            if (session.role === "admin" || session.role === "moderator") {
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectUrl = urlParams.get("redirect");
+            if (redirectUrl) {
+                window.location.href = redirectUrl;
+            }
+            else if (session.role === "admin" || session.role === "moderator") {
                 window.location.href = "index.html";
             }
             else {
-                window.location.href = "operator.html";
+                window.location.href = "ambil-antrian.html";
             }
         }
         catch (err) {

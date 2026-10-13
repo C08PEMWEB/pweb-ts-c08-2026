@@ -1,10 +1,13 @@
-import { getServices, createTicket } from "./utils/storage.js";
-// 1. Ambil hanya layanan yang berstatus aktif dari storage
+import { getServices, createTicket, clearSession } from "./utils/storage.js";
+import { requireAuth } from "./utils/guard.js";
+// 1. Auth Guard: Seluruh pengguna wajib login untuk ambil antrian (Revisi Modul 3)
+const session = requireAuth();
+// 2. Ambil hanya layanan yang berstatus aktif dari storage
 function getActiveServices() {
     const allServices = getServices();
     return allServices.filter((s) => s.isActive);
 }
-// 2. Render opsi ke dalam elemen <select id="select-service">
+// 3. Render opsi ke dalam elemen <select id="select-service">
 function renderServiceOptions() {
     const selectEl = document.getElementById("select-service");
     if (!selectEl)
@@ -19,8 +22,42 @@ function renderServiceOptions() {
         .join("");
     selectEl.innerHTML = `<option value="" disabled selected>-- Pilih Layanan --</option>` + optionsHtml;
 }
-// 3. Event listener utama saat dokumen siap
+// 4. Event listener utama saat dokumen siap
 document.addEventListener("DOMContentLoaded", () => {
+    // Tampilkan data pengguna yang sedang login
+    const kioskUserName = document.getElementById("kiosk-user-name");
+    const kioskUserRole = document.getElementById("kiosk-user-role");
+    if (kioskUserName) {
+        kioskUserName.textContent = session.firstName || session.username;
+    }
+    if (kioskUserRole) {
+        kioskUserRole.textContent = session.role.toUpperCase();
+        kioskUserRole.className = `badge ${session.role === "admin" || session.role === "moderator"
+            ? "badge-primary"
+            : "badge-secondary"}`;
+    }
+    // Tombol Keluar (Logout)
+    const btnLogout = document.getElementById("btn-logout");
+    if (btnLogout) {
+        btnLogout.addEventListener("click", () => {
+            if (confirm("Apakah Anda yakin ingin keluar?")) {
+                clearSession();
+                window.location.href = "login.html";
+            }
+        });
+    }
+    // Tautan navigasi sesuai role pengguna
+    const navDashboardLink = document.getElementById("nav-dashboard-link");
+    if (navDashboardLink) {
+        if (session.role === "admin" || session.role === "moderator") {
+            navDashboardLink.href = "index.html";
+            navDashboardLink.textContent = "Dashboard Admin";
+        }
+        else {
+            navDashboardLink.href = "operator.html";
+            navDashboardLink.textContent = "Panel Operator";
+        }
+    }
     renderServiceOptions();
     const formKiosk = document.getElementById("form-kiosk");
     formKiosk?.addEventListener("submit", (e) => {

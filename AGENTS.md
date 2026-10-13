@@ -45,7 +45,7 @@ Aplikasi **Sistem Antrian Rumah Sakit Interaktif** murni *front-end* (*native fr
   4. Auto-redirect sesuai role pengguna:
      - Admin/Moderator $\rightarrow$ `index.html`
      - User biasa $\rightarrow$ `operator.html` atau `ambil-antrian.html`
-  5. Halaman Kiosk mandiri untuk publik: Memilih jenis antrian aktif dan tingkat prioritas (Normal, Lansia, Disabilitas, VIP).
+  5. Halaman Kiosk mandiri: Memilih jenis antrian aktif dan tingkat prioritas (Normal, Lansia, Disabilitas, VIP). Wajib login terlebih dahulu (Revisi Modul 3).
   6. Cetak nomor tiket dengan format `[Kode]-[3 Digit]` (misal: `A-001`).
   7. Pembaruan daftar layanan secara real-time di kiosk tanpa reload halaman.
 
