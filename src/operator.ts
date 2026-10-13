@@ -101,7 +101,7 @@ if (operatorContainer) {
     if (action === "recall") {
       // Panggil ulang hanya mengulang suara; status tiket tidak berubah
       const current = getCurrentlyCalledTicket(serviceCode, tickets);
-      if (current && !speakTicketCall(current.ticketNumber, current.serviceName)) {
+      if (current && !speakTicketCall(current.ticketNumber, current.serviceName, true)) {
         alert("Browser ini tidak mendukung suara pemanggilan (Web Speech API).");
       }
       return;
@@ -114,12 +114,7 @@ if (operatorContainer) {
 
     saveTickets(updatedTickets);
 
-    // Ucapkan nomor yang baru dipanggil (bukan saat hanya selesai/lewati)
-    if (action === "call") {
-      const called = getCurrentlyCalledTicket(serviceCode, updatedTickets);
-      if (called) speakTicketCall(called.ticketNumber, called.serviceName);
-    }
-
+    // Pengumuman otomatis nomor baru dilakukan layar.html; operator hanya mengulang lewat "Panggil Ulang"
     renderOperator();
   });
 }

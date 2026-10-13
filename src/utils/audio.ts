@@ -5,18 +5,7 @@
 
 const SPEECH_LANG = "id-ID";
 
-const DIGIT_WORDS: Record<string, string> = {
-  "0": "nol",
-  "1": "satu",
-  "2": "dua",
-  "3": "tiga",
-  "4": "empat",
-  "5": "lima",
-  "6": "enam",
-  "7": "tujuh",
-  "8": "delapan",
-  "9": "sembilan",
-};
+const DIGIT_WORDS = ["nol", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan"];
 
 export function isSpeechSupported(): boolean {
   return "speechSynthesis" in window && typeof SpeechSynthesisUtterance !== "undefined";
@@ -28,8 +17,8 @@ export function isSpeechSupported(): boolean {
  */
 function spellTicketNumber(ticketNumber: string): string {
   const [code = "", digits = ""] = ticketNumber.split("-");
-  const spokenDigits = [...digits].map((d) => DIGIT_WORDS[d] ?? d).join(" ");
-  return `${code}, ${spokenDigits}`;
+  const spelled = [...digits].map((d) => DIGIT_WORDS[Number(d)] ?? d).join(" ");
+  return `${code}, ${spelled}`;
 }
 
 function pickIndonesianVoice(): SpeechSynthesisVoice | undefined {
@@ -39,14 +28,13 @@ function pickIndonesianVoice(): SpeechSynthesisVoice | undefined {
 }
 
 /**
- * Mengucapkan panggilan antrian. Panggilan yang sedang berjalan dihentikan lebih dulu
- * agar suara tidak menumpuk saat operator menekan tombol berkali-kali.
- * Mengembalikan false jika browser tidak mendukung Web Speech API.
+ * @param interrupt true: hentikan suara yang sedang berjalan lebih dulu (dipakai Panggil Ulang
+ *                  agar tidak menumpuk). false: masuk antrian sehingga tidak memotong
+ *                  pengumuman layanan lain.
  */
-export function speakTicketCall(ticketNumber: string, serviceName: string): boolean {
+function speak(text: string, interrupt: boolean): boolean {
   if (!isSpeechSupported()) return false;
 
-  const text = `Nomor antrian ${spellTicketNumber(ticketNumber)}. Silakan menuju ${serviceName}.`;
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = SPEECH_LANG;
   utterance.rate = 0.9;
@@ -54,7 +42,17 @@ export function speakTicketCall(ticketNumber: string, serviceName: string): bool
   const voice = pickIndonesianVoice();
   if (voice) utterance.voice = voice;
 
-  window.speechSynthesis.cancel();
+  if (interrupt) window.speechSynthesis.cancel();
   window.speechSynthesis.speak(utterance);
   return true;
+}
+
+/** Mengucapkan panggilan antrian. Mengembalikan false jika browser tidak mendukung. */
+export function speakTicketCall(ticketNumber: string, serviceName: string, interrupt = false): boolean {
+  return speak(`Nomor antrian ${spellTicketNumber(ticketNumber)}. Silakan menuju ${serviceName}.`, interrupt);
+}
+
+/** Dipanggil dari klik tombol: membuka izin suara sekaligus jadi tes. */
+export function enableSpeech(): void {
+  speak("Suara pemanggilan antrian aktif", false);
 }
