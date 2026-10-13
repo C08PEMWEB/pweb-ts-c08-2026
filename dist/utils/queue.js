@@ -43,7 +43,7 @@ export function getNextTicket(serviceCode, tickets) {
  * Menghitung sisa tiket yang masih menunggu untuk suatu layanan
  */
 export function getWaitingCount(serviceCode, tickets) {
-    return tickets.filter((t) => t.serviceCode === serviceCode && t.status === "menunggu").length;
+    return tickets.filter((t) => t.serviceCode === serviceCode && (t.status === "menunggu" || t.status === "dilewati")).length;
 }
 /** Menyelesaikan tiket yang sedang dipanggil, lalu memanggil tiket berikutnya. */
 export function callNext(serviceCode, tickets, now) {
