@@ -7,6 +7,17 @@ export interface AuthSession {
   username: string;
 }
 
+// Halaman aplikasi yang tampil di navigasi utama (dipakai oleh setupNavbar)
+export type AppPage = "dashboard" | "kiosk" | "operator" | "layar";
+
+export interface NavItem {
+  page: AppPage;
+  href: string;
+  label: string;
+  icon: string;          // isi <path> SVG ikon tab (viewBox 0 0 16 16)
+  roles: UserRole[];     // role yang boleh melihat & membuka halaman ini
+}
+
 export interface LoginPayload {
   username: string;
   password: string;

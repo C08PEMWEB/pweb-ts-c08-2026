@@ -1,6 +1,7 @@
 import type { AuthSession } from "./types/index.js";
 import { getServices, getTickets, saveTickets } from "./utils/storage.js";
 import { requireAuth, setupNavbar } from "./utils/guard.js";
+import { speakTicketCall } from "./utils/audio.js";
 import {
   callNext,
   finishCurrent,
@@ -16,7 +17,7 @@ const SERVICES_KEY = "rs_queue_services";
 
 // Auth Guard: operator hanya boleh dibuka oleh yang sudah login
 const session: AuthSession = requireAuth(["admin", "moderator", "user"]);
-setupNavbar(session);
+setupNavbar(session, "operator");
 
 const operatorContainer = document.getElementById("operator-container");
 
@@ -71,6 +72,7 @@ function renderOperator(): void {
           </div>
           <div class="operator-actions">
             <button class="btn btn-primary" data-action="call" data-code="${code}">Panggil Berikutnya</button>
+            <button class="btn" data-action="recall" data-code="${code}" ${called ? "" : "disabled"}>Panggil Ulang</button>
             <button class="btn" data-action="finish" data-code="${code}">Selesai</button>
             <button class="btn btn-danger-outline" data-action="skip" data-code="${code}">Lewati</button>
           </div>
@@ -79,7 +81,8 @@ function renderOperator(): void {
     `;
   }
 
-  operatorContainer.innerHTML = html;
+  operatorContainer.innerHTML =
+    html || '<p class="operator-empty">Belum ada layanan aktif. Aktifkan layanan melalui Dashboard Admin.</p>';
 }
 
 if (operatorContainer) {
@@ -95,12 +98,27 @@ if (operatorContainer) {
     const now = new Date().toISOString();
     let updatedTickets = tickets;
 
+    if (action === "recall") {
+      // Panggil ulang hanya mengulang suara; status tiket tidak berubah
+      const current = getCurrentlyCalledTicket(serviceCode, tickets);
+      if (current && !speakTicketCall(current.ticketNumber, current.serviceName)) {
+        alert("Browser ini tidak mendukung suara pemanggilan (Web Speech API).");
+      }
+      return;
+    }
+
     if (action === "call") updatedTickets = callNext(serviceCode, tickets, now);
     else if (action === "finish") updatedTickets = finishCurrent(serviceCode, tickets, now);
     else if (action === "skip") updatedTickets = skipCurrent(serviceCode, tickets, now);
     else return;
 
     saveTickets(updatedTickets);
+
+    // Ucapkan nomor yang baru dipanggil (bukan saat hanya selesai/lewati)
+    if (action === "call") {
+      const called = getCurrentlyCalledTicket(serviceCode, updatedTickets);
+      if (called) speakTicketCall(called.ticketNumber, called.serviceName);
+    }
 
     renderOperator();
   });

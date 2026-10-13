@@ -3,14 +3,9 @@
   padding-top: 16px;
 }
 
-.layar-subtitle,
 .layar-label,
 .layar-waiting {
   color: var(--gh-fg-muted);
-}
-
-.layar-subtitle {
-  margin-bottom: 16px;
 }
 
 /* Mobile: 1 kolom. Tablet: 2 kolom. Desktop: 4 kolom. */
@@ -87,16 +82,4 @@
   border-radius: var(--radius-md);
   color: var(--gh-fg-muted);
   text-align: center;
-}
-
-@media (max-width: 560px) {
-  .gh-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .gh-header-right {
-    flex-wrap: wrap;
-  }
 }

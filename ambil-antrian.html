@@ -7,55 +7,51 @@
   <link rel="stylesheet" href="css/style.css">
   <script type="module" src="dist/ambil-antrian.js" defer></script>
 </head>
-<body style="display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background-color: #0d1117;">
-  <div style="width: 100%; max-width: 480px; padding: 24px; background-color: #161b22; border: 1px solid #30363d; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
-    
-    <!-- Header Informasi Sesi Pengguna (Wajib Login) -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #30363d;">
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="font-size: 13px; color: #8b949e;">Login:</span>
-        <strong id="kiosk-user-name" style="font-size: 13px; color: #58a6ff;">-</strong>
-        <span id="kiosk-user-role" class="badge badge-secondary">-</span>
+<body>
+  <!-- Navigasi utama: dirender oleh setupNavbar() di src/utils/guard.ts sesuai role -->
+  <header id="app-header" class="gh-header"></header>
+  <nav id="app-subnav" class="gh-subnav" aria-label="Navigasi utama"></nav>
+
+  <main class="container container-narrow">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Kiosk Mandiri – Ambil Nomor Antrian</h1>
+        <p class="page-subtitle">Pilih layanan dan tingkat prioritas, lalu ambil nomor antrian Anda.</p>
       </div>
-      <button id="btn-logout" type="button" class="btn btn-sm" style="font-size: 12px; padding: 2px 8px; height: auto;">Keluar</button>
     </div>
 
-    <h2 style="margin-top: 0; margin-bottom: 8px; font-size: 20px; color: #f0f6fc;">Kiosk Mandiri - Ambil Nomor Antrian</h2>
-    <p style="margin-top: 0; margin-bottom: 20px; font-size: 13px; color: #8b949e;">Pilih layanan dan prioritas antrian Anda:</p>
+    <div class="card">
+      <div class="card-body">
+        <form id="form-kiosk">
+          <div class="form-group">
+            <label for="select-service" class="form-label">Pilih Layanan</label>
+            <select id="select-service" class="form-select" required>
+              <option value="" disabled selected>-- Pilih Layanan --</option>
+            </select>
+          </div>
 
-    <form id="form-kiosk">
-      <div style="margin-bottom: 16px;">
-        <label for="select-service" style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #c9d1d9;">Pilih Layanan:</label>
-        <select id="select-service" required style="width: 100%; padding: 8px 12px; background-color: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #c9d1d9; box-sizing: border-box;">
-          <option value="" disabled selected>-- Pilih Layanan --</option>
-        </select>
+          <div class="form-group">
+            <label for="select-priority" class="form-label">Pilih Prioritas</label>
+            <select id="select-priority" class="form-select">
+              <option value="Normal">Normal</option>
+              <option value="Lansia">Lansia</option>
+              <option value="Disabilitas">Disabilitas</option>
+              <option value="VIP">VIP</option>
+            </select>
+          </div>
+
+          <button type="submit" id="btn-submit-kiosk" class="btn btn-primary btn-block">Ambil Nomor Antrian</button>
+        </form>
       </div>
-
-      <div style="margin-bottom: 20px;">
-        <label for="select-priority" style="display: block; margin-bottom: 6px; font-size: 14px; font-weight: 500; color: #c9d1d9;">Pilih Prioritas:</label>
-        <select id="select-priority" style="width: 100%; padding: 8px 12px; background-color: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #c9d1d9; box-sizing: border-box;">
-          <option value="Normal">Normal</option>
-          <option value="Lansia">Lansia</option>
-          <option value="Disabilitas">Disabilitas</option>
-          <option value="VIP">VIP</option>
-        </select>
-      </div>
-
-      <button type="submit" id="btn-submit-kiosk" style="width: 100%; padding: 10px; background-color: #238636; border: 1px solid rgba(240,246,252,0.1); border-radius: 6px; color: #ffffff; font-weight: 600; cursor: pointer;">Ambil Nomor Antrian</button>
-    </form>
-
-    <div id="kiosk-result" style="display: none; margin-top: 20px; padding: 16px; background-color: #0d1117; border: 1px dashed #238636; border-radius: 8px; text-align: center;">
-      <h3 style="margin: 0 0 8px 0; font-size: 14px; color: #3fb950; text-transform: uppercase;">Tiket Antrian Anda</h3>
-      <p style="margin: 4px 0; font-size: 13px; color: #8b949e;">Layanan: <span id="result-service" style="color: #f0f6fc; font-weight: 600;">-</span></p>
-      <p style="margin: 8px 0; font-size: 32px; font-weight: bold; color: #58a6ff;"><span id="result-number">-</span></p>
-      <p style="margin: 4px 0; font-size: 13px; color: #8b949e;">Prioritas: <span id="result-priority" style="color: #c9d1d9;">-</span></p>
     </div>
 
-    <div style="margin-top: 24px; padding-top: 12px; border-top: 1px solid #30363d; text-align: center; font-size: 13px;">
-      <a href="layar.html" style="color: #58a6ff; text-decoration: none;">Layar Antrian</a>
-      <span style="color: #484f58; margin: 0 8px;">|</span>
-      <a id="nav-dashboard-link" href="operator.html" style="color: #58a6ff; text-decoration: none;">Panel Operator</a>
+    <div id="kiosk-result" class="kiosk-ticket" hidden>
+      <h2 class="kiosk-ticket-title">Tiket Antrian Anda</h2>
+      <p class="kiosk-ticket-meta">Layanan: <strong id="result-service">-</strong></p>
+      <p class="kiosk-ticket-number" id="result-number">-</p>
+      <p class="kiosk-ticket-meta">Prioritas: <strong id="result-priority">-</strong></p>
+      <p class="kiosk-ticket-hint">Pantau nomor Anda di <a href="layar.html">Layar Antrian</a>.</p>
     </div>
-  </div>
+  </main>
 </body>
 </html>

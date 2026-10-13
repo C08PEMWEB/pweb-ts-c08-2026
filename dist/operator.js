@@ -1,12 +1,13 @@
 import { getServices, getTickets, saveTickets } from "./utils/storage.js";
 import { requireAuth, setupNavbar } from "./utils/guard.js";
+import { speakTicketCall } from "./utils/audio.js";
 import { callNext, finishCurrent, getCurrentlyCalledTicket, getNextTicket, getWaitingCount, skipCurrent, } from "./utils/queue.js";
 // Nilai key harus sama dengan konstanta KEYS di storage.ts.
 const TICKETS_KEY = "rs_queue_tickets";
 const SERVICES_KEY = "rs_queue_services";
 // Auth Guard: operator hanya boleh dibuka oleh yang sudah login
 const session = requireAuth(["admin", "moderator", "user"]);
-setupNavbar(session);
+setupNavbar(session, "operator");
 const operatorContainer = document.getElementById("operator-container");
 /**
  * Render dasar antrian operator (starter skeleton)
@@ -54,6 +55,7 @@ function renderOperator() {
           </div>
           <div class="operator-actions">
             <button class="btn btn-primary" data-action="call" data-code="${code}">Panggil Berikutnya</button>
+            <button class="btn" data-action="recall" data-code="${code}" ${called ? "" : "disabled"}>Panggil Ulang</button>
             <button class="btn" data-action="finish" data-code="${code}">Selesai</button>
             <button class="btn btn-danger-outline" data-action="skip" data-code="${code}">Lewati</button>
           </div>
@@ -61,7 +63,8 @@ function renderOperator() {
       </div>
     `;
     }
-    operatorContainer.innerHTML = html;
+    operatorContainer.innerHTML =
+        html || '<p class="operator-empty">Belum ada layanan aktif. Aktifkan layanan melalui Dashboard Admin.</p>';
 }
 if (operatorContainer) {
     operatorContainer.addEventListener("click", (e) => {
@@ -75,6 +78,14 @@ if (operatorContainer) {
         const tickets = getTickets();
         const now = new Date().toISOString();
         let updatedTickets = tickets;
+        if (action === "recall") {
+            // Panggil ulang hanya mengulang suara; status tiket tidak berubah
+            const current = getCurrentlyCalledTicket(serviceCode, tickets);
+            if (current && !speakTicketCall(current.ticketNumber, current.serviceName)) {
+                alert("Browser ini tidak mendukung suara pemanggilan (Web Speech API).");
+            }
+            return;
+        }
         if (action === "call")
             updatedTickets = callNext(serviceCode, tickets, now);
         else if (action === "finish")
@@ -84,6 +95,12 @@ if (operatorContainer) {
         else
             return;
         saveTickets(updatedTickets);
+        // Ucapkan nomor yang baru dipanggil (bukan saat hanya selesai/lewati)
+        if (action === "call") {
+            const called = getCurrentlyCalledTicket(serviceCode, updatedTickets);
+            if (called)
+                speakTicketCall(called.ticketNumber, called.serviceName);
+        }
         renderOperator();
     });
 }

@@ -10,6 +10,8 @@ catch {
     // Pengalihan sudah ditangani di requireAuth
     throw new Error("Akses tidak diizinkan.");
 }
+// Navbar dirender lebih dulu karena tombol Reset Antrian berada di dalamnya
+setupNavbar(currentSession, "dashboard");
 // Inisialisasi DOM Elements
 const alertContainer = document.getElementById("alert-container");
 const serviceListContainer = document.getElementById("service-list-container");
@@ -316,25 +318,8 @@ if (btnResetAntrian) {
     });
 }
 // Inisialisasi awal UI
-setupNavbar(currentSession);
 renderServices();
 renderQueueOverview();
-// Dropdown menu profil pengguna di navigator kiri
-const btnProfileToggle = document.getElementById("btn-profile-toggle");
-const profileDropdownMenu = document.getElementById("profile-dropdown-menu");
-if (btnProfileToggle && profileDropdownMenu) {
-    btnProfileToggle.addEventListener("click", (e) => {
-        e.stopPropagation();
-        profileDropdownMenu.classList.toggle("show");
-    });
-    // Tutup dropdown saat klik di luar area
-    document.addEventListener("click", (e) => {
-        const target = e.target;
-        if (!profileDropdownMenu.contains(target) && !btnProfileToggle.contains(target)) {
-            profileDropdownMenu.classList.remove("show");
-        }
-    });
-}
 // Real-time synchronization saat ada perubahan di tab/jendela browser lain
 window.addEventListener("storage", () => {
     renderServices();

@@ -9,19 +9,20 @@
   <script type="module" src="dist/layar.js" defer></script>
 </head>
 <body>
-  <header class="gh-header">
-    <div class="gh-header-left">
-      <strong>Layar Antrian Rumah Sakit</strong>
-    </div>
-    <div class="gh-header-right">
-      <a class="btn btn-sm" href="ambil-antrian.html">Kiosk Ambil Tiket</a>
-      <a class="btn btn-sm" href="login.html">Login Petugas</a>
-      <button id="btn-fullscreen" class="btn btn-sm btn-primary" type="button">Layar Penuh</button>
-    </div>
-  </header>
+  <!-- Navigasi utama: dirender oleh setupNavbar() di src/utils/guard.ts sesuai role -->
+  <header id="app-header" class="gh-header"></header>
+  <nav id="app-subnav" class="gh-subnav" aria-label="Navigasi utama"></nav>
 
   <main class="container layar-container">
-    <p class="layar-subtitle">Status nomor yang sedang dipanggil dan sisa antrean.</p>
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Layar Antrian Rumah Sakit</h1>
+        <p class="page-subtitle">Status nomor yang sedang dipanggil dan sisa antrean.</p>
+      </div>
+      <div class="page-actions">
+        <button id="btn-fullscreen" class="btn btn-primary" type="button">Layar Penuh</button>
+      </div>
+    </div>
 
     <div id="monitor-list" class="layar-grid">
       <!-- Diisi oleh layar.ts -->

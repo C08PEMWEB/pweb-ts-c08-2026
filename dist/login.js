@@ -1,5 +1,5 @@
 import { saveSession } from "./utils/storage.js";
-import { redirectIfLoggedIn } from "./utils/guard.js";
+import { redirectIfLoggedIn, getPostLoginUrl } from "./utils/guard.js";
 // Pengalihan otomatis jika pengguna sudah login
 redirectIfLoggedIn();
 const formLogin = document.getElementById("form-login");
@@ -17,12 +17,14 @@ if (formLogin) {
         if (!username || !password) {
             if (alertBox) {
                 alertBox.textContent = "Username dan password wajib diisi!";
-                alertBox.style.color = "#f85149";
+                alertBox.className = "alert alert-danger";
             }
             return;
         }
-        if (alertBox)
+        if (alertBox) {
             alertBox.textContent = "";
+            alertBox.className = "";
+        }
         if (btnSubmitLogin) {
             btnSubmitLogin.disabled = true;
             btnSubmitLogin.textContent = "Memproses...";
@@ -76,23 +78,13 @@ if (formLogin) {
                 username: loginData.username,
             };
             saveSession(session);
-            const urlParams = new URLSearchParams(window.location.search);
-            const redirectUrl = urlParams.get("redirect");
-            if (redirectUrl) {
-                window.location.href = redirectUrl;
-            }
-            else if (session.role === "admin" || session.role === "moderator") {
-                window.location.href = "index.html";
-            }
-            else {
-                window.location.href = "ambil-antrian.html";
-            }
+            window.location.href = getPostLoginUrl(session);
         }
         catch (err) {
             if (alertBox) {
                 alertBox.textContent =
                     err instanceof Error ? err.message : "Terjadi kesalahan jaringan.";
-                alertBox.style.color = "#f85149";
+                alertBox.className = "alert alert-danger";
             }
         }
         finally {

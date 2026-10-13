@@ -1,5 +1,9 @@
-import { getServices, getTickets } from "./utils/storage.js";
+import { getServices, getTickets, getSession } from "./utils/storage.js";
+import { setupNavbar } from "./utils/guard.js";
 import { getCurrentlyCalledTicket, getWaitingCount } from "./utils/queue.js";
+
+// Halaman publik: navigasi menyesuaikan ada/tidaknya sesi login
+setupNavbar(getSession(), "layar");
 
 const monitorList = document.getElementById("monitor-list");
 const btnFullscreen = document.getElementById("btn-fullscreen");
