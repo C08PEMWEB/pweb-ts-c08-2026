@@ -1,6 +1,9 @@
-import { getServices, getTickets, saveTickets, STORAGE_KEYS } from "./utils/storage.js";
+import { getServices, getTickets, saveTickets } from "./utils/storage.js";
 import { requireAuth, setupNavbar } from "./utils/guard.js";
 import { callNext, finishCurrent, getCurrentlyCalledTicket, getNextTicket, getWaitingCount, skipCurrent, } from "./utils/queue.js";
+// Nilai key harus sama dengan konstanta KEYS di storage.ts.
+const TICKETS_KEY = "rs_queue_tickets";
+const SERVICES_KEY = "rs_queue_services";
 // Auth Guard: operator hanya boleh dibuka oleh yang sudah login
 const session = requireAuth(["admin", "moderator", "user"]);
 setupNavbar(session);
@@ -85,7 +88,7 @@ if (operatorContainer) {
     });
 }
 window.addEventListener("storage", (event) => {
-    if (event.key === STORAGE_KEYS.TICKETS || event.key === STORAGE_KEYS.SERVICES) {
+    if (event.key === TICKETS_KEY || event.key === SERVICES_KEY) {
         renderOperator();
     }
 });

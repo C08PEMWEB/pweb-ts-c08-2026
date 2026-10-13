@@ -31,9 +31,13 @@ export function getCurrentlyCalledTicket(serviceCode, tickets) {
  * Mengambil tiket berikutnya dalam antrian untuk dipanggil berdasarkan urutan prioritas
  */
 export function getNextTicket(serviceCode, tickets) {
-    const waitingTickets = tickets.filter((t) => t.serviceCode === serviceCode && t.status === "menunggu");
-    const sorted = sortTicketsByPriority(waitingTickets);
-    return sorted[0];
+    const waiting = tickets.filter((t) => t.serviceCode === serviceCode && t.status === "menunggu");
+    const first = sortTicketsByPriority(waiting)[0];
+    if (first)
+        return first;
+    return tickets
+        .filter((t) => t.serviceCode === serviceCode && t.status === "dilewati")
+        .sort((a, b) => (a.calledAt ?? "").localeCompare(b.calledAt ?? ""))[0];
 }
 /**
  * Menghitung sisa tiket yang masih menunggu untuk suatu layanan
